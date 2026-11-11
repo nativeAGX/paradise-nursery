@@ -6,25 +6,53 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 
 import {
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart
+  updateQuantity,
+  removeItem
 } from "../redux/CartSlice";
 
 function CartItem() {
   const dispatch = useDispatch();
 
-  const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector(
+    state => state.cart.items
+  );
 
+  // Calculate total number of plants
   const totalQuantity = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
   );
 
+  // Calculate total cart amount
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
+
+  // Increase quantity
+  const handleIncrease = (item) => {
+    dispatch(
+      updateQuantity({
+        id: item.id,
+        quantity: item.quantity + 1
+      })
+    );
+  };
+
+  // Decrease quantity
+  const handleDecrease = (item) => {
+    dispatch(
+      updateQuantity({
+        id: item.id,
+        quantity: item.quantity - 1
+      })
+    );
+  };
+
+  // Remove item from cart
+  const handleRemove = (id) => {
+    dispatch(removeItem(id));
+  };
 
   return (
     <>
@@ -39,10 +67,14 @@ function CartItem() {
         </h3>
 
         {cartItems.length === 0 ? (
+
           <div className="empty-cart">
+
             <h2>Your Cart is Empty</h2>
 
-            <p>Explore our beautiful collection of plants.</p>
+            <p>
+              Explore our beautiful collection of plants.
+            </p>
 
             <div className="cart-actions">
               <Link
@@ -52,11 +84,19 @@ function CartItem() {
                 Continue Shopping
               </Link>
             </div>
+
           </div>
+
         ) : (
+
           <>
+
             {cartItems.map(item => (
-              <div className="cart-row" key={item.id}>
+
+              <div
+                className="cart-row"
+                key={item.id}
+              >
 
                 <img
                   src={item.image}
@@ -83,9 +123,9 @@ function CartItem() {
                   <div className="quantity-controls">
 
                     <button
-                      onClick={() =>
-                        dispatch(decreaseQuantity(item.id))
-                      }
+                      type="button"
+                      onClick={() => handleDecrease(item)}
+                      aria-label={`Decrease quantity of ${item.name}`}
                     >
                       -
                     </button>
@@ -93,9 +133,9 @@ function CartItem() {
                     <span>{item.quantity}</span>
 
                     <button
-                      onClick={() =>
-                        dispatch(increaseQuantity(item.id))
-                      }
+                      type="button"
+                      onClick={() => handleIncrease(item)}
+                      aria-label={`Increase quantity of ${item.name}`}
                     >
                       +
                     </button>
@@ -105,15 +145,15 @@ function CartItem() {
                 </div>
 
                 <button
+                  type="button"
                   className="delete-button"
-                  onClick={() =>
-                    dispatch(removeFromCart(item.id))
-                  }
+                  onClick={() => handleRemove(item.id)}
                 >
                   Delete
                 </button>
 
               </div>
+
             ))}
 
             <div className="cart-summary">
@@ -138,6 +178,7 @@ function CartItem() {
                 </Link>
 
                 <button
+                  type="button"
                   className="checkout-button"
                   onClick={() =>
                     alert("Checkout Coming Soon!")
@@ -149,7 +190,9 @@ function CartItem() {
               </div>
 
             </div>
+
           </>
+
         )}
 
       </div>

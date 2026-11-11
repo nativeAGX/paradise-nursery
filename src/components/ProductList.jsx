@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Header from "./Header";
-import { addToCart } from "../redux/CartSlice";
+import { addItem } from "../redux/CartSlice";
 
 const categories = [
   {
@@ -137,7 +137,7 @@ function ProductList() {
   const cartItems = useSelector(state => state.cart.items);
 
   const handleAddToCart = (plant) => {
-    dispatch(addToCart(plant));
+    dispatch(addItem(plant));
   };
 
   return (
